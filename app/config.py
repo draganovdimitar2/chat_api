@@ -9,4 +9,4 @@ class Settings(BaseSettings):  # this class reads the .env variables
     )
 
 
-Config = Settings()
+Config = Settings()  # import this for accessing .env variable
