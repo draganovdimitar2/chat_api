@@ -1,2 +1,2 @@
 # chat_api
-Real-Time Notifications API 
+Chat room using Websockets
