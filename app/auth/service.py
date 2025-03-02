@@ -1,6 +1,6 @@
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlmodel import select
-from app.auth.security import get_password_hash, verify_password
+from app.auth.utils import get_password_hash, verify_password
 from app.auth.schemas import UserRegistrationModel
 from app.db.models import User
 
