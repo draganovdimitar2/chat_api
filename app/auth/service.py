@@ -61,3 +61,20 @@ class UserService:
         user = await self.get_user_by_credential(credentials, session)
 
         return True if user is not None else False
+
+    async def authenticate_user(self, credential: str, password: str, session: AsyncSession) -> User | None:
+        """
+        Authenticates a user based on provided credentials and password.
+
+        Args:
+            credential (str): The user's email or username.
+            password (str): The user's plain text password.
+            session (AsyncSession): The database session.
+
+        Returns:
+            User | None: The authenticated user instance if successful, otherwise None.
+        """
+        user = await self.get_user_by_credential(credential, session)
+        if user and verify_password(password, user.password_hash):
+            return user
+        return None
