@@ -1,5 +1,6 @@
 from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
+from fastapi import HTTPException
 import jwt
 from app.config import Config
 
@@ -30,8 +31,16 @@ def create_access_token(user_data: dict, expiry: timedelta | None = None):
 
     return token
 
-# {
-#   "user_id": "some_id",  # example of token output
-#   "username": "John",
-#   "exp": 1740946347
-# }
+
+def decode_token(token: str) -> dict:
+    try:
+        payload = jwt.decode(token, Config.JWT_SECRET_KEY, algorithms=[Config.ALGORITHM])
+        user_id = payload.get("user_id")
+        username = payload.get("username")
+        if user_id is None or username is None:
+            raise HTTPException(status_code=401, detail="Invalid token payload")
+        return {"id": user_id, "username": username}
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token has expired")
+    except jwt.PyJWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")

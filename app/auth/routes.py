@@ -5,7 +5,6 @@ from fastapi.params import Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from .schemas import UserRegistrationModel
 from .service import UserService
-from .dependencies import get_current_user
 from app.db.main import get_session
 from app.auth.utils import create_access_token
 
@@ -14,7 +13,6 @@ router = APIRouter(prefix='/auth', tags=['Auth'])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 session_dependency = Annotated[AsyncSession, Depends(get_session)]
-current_user_dependency = Annotated[dict, Depends(get_current_user)]
 
 
 @router.post("/register")
@@ -49,8 +47,3 @@ async def login(session: session_dependency,
 
     access_token = create_access_token({"id": user.id, "username": user.username})
     return {"access_token": access_token, "token_type": "bearer"}
-
-
-@router.get("/users/me")
-async def read_current_user(current_user: current_user_dependency):
-    return current_user
