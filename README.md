@@ -31,7 +31,14 @@ The system features secure user authentication using **JWT tokens**, **Argon2** 
     ```bash
     pip install -r requirements.txt "fastapi[standard]"
     ```
-5. Run database migrations to initialize the database schema:
+5. Create a .env file in the project directory (in chat_api folder) and add the following contents:
+   ```bash
+    DATABASE_URL=postgresql+asyncpg://YOUR_DATABASE_URL
+    JWT_SECRET_KEY=YOUR_JWT_SECRET_KEY
+    ALGORITHM=HS256
+    ACCESS_TOKEN_EXPIRY=60
+    ```
+6. Run database migrations to initialize the database schema:
     ```bash
     alembic upgrade head
     ```
