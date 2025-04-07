@@ -1,5 +1,10 @@
-# Chat Room using Websockets
+# Chat Room API
 
+## 📘 Project Overview
+This project was created as a way to introduce myself to WebSockets using **FastAPI**. It's a backend chat application that demonstrates real-time communication and includes integration with **PostgreSQL** using an ORM approach via **SQLModel**, along with **Alembic** for handling database migrations.
+
+The system features secure user authentication using **JWT tokens**, **Argon2** for password hashing, and **OAuth2** for authorization flow.  
+> 🚧 This project is still in active development, with more features and improvements on the way.
 ## ⚙️ Installation
 
 1. Clone the repository:
@@ -46,14 +51,14 @@
    * Use the auth/register endpoint in Swagger UI to create 2 test users
    * Example request body for the first user:
       ```bash 
-      "username": "user1",
-      "email": "user1@gmail.com",
+      "username": "test1",
+      "email": "test1@gmail.com",
       "password": "1234"
       ```
     * Example request body for the second user:
       ```bash 
-      "username": "user2",
-      "email": "user2@gmail.com",
+      "username": "test2",
+      "email": "test2@gmail.com",
       "password": "1234"
       ```
 2. Get JWT tokens
@@ -61,13 +66,14 @@
    * Save both tokens for WebSocket connections
 
 ## 💬 Connecting to Chat
+Because this project currently lacks a frontend interface, you can connect to the chat using a WebSocket client.
 1. WebSocket Setup
    * Open [Hoppscotch WebSocket Client](https://hoppscotch.io/realtime/websocket)
-   * Configure connection with both users:
+   * Connect using each user's token:
       ```bash 
       ws://localhost:8000/chat/ws?token=YOUR_TOKEN_HERE
       ```
-    * Press connect and start chatting :)
+    * Press Connect and start chatting :)
   
 ## 🔮 Future Improvements
 1. Frontend Development 👥
