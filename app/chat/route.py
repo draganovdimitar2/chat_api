@@ -1,5 +1,6 @@
 from starlette import status
 from starlette.websockets import WebSocketDisconnect
+from fastapi import WebSocketException
 from app.auth.utils import decode_token
 from fastapi import HTTPException
 from fastapi.params import Depends
@@ -10,7 +11,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from app.db.main import get_session
 from app.chat.connection_manager import ConnectionManager
 
-websocket_route = APIRouter(prefix='/ws', tags=['WebSocket'])
+websocket_route = APIRouter(prefix='/chat', tags=['WebSocket'])
 session_dependency = Annotated[AsyncSession, Depends(get_session)]
 
 manager = ConnectionManager()
@@ -20,14 +21,12 @@ manager = ConnectionManager()
 async def websocket_endpoint(websocket: WebSocket):
     token = websocket.query_params.get("token")
     if not token:
-        await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
-        return
+        raise WebSocketException(code=status.WS_1008_POLICY_VIOLATION)
 
     try:
         user = decode_token(token)
-    except HTTPException:
-        await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
-        return
+    except HTTPException as ex:
+        raise WebSocketException(code=status.WS_1008_POLICY_VIOLATION)
 
     await manager.connect(websocket)
 
