@@ -1,9 +1,10 @@
 from fastapi import APIRouter, HTTPException
 from typing import Annotated
+from .dependency import get_current_user
 from sqlmodel.ext.asyncio.session import AsyncSession
 from fastapi.params import Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from .schemas import UserRegistrationModel
+from .schemas import UserRegistrationModel, ChangeUserPassword
 from .service import UserService
 from app.db.main import get_session
 from app.auth.utils import create_access_token
@@ -47,3 +48,12 @@ async def login(session: session_dependency,
 
     access_token = create_access_token({"id": user.id, "username": user.username})
     return {"access_token": access_token, "token_type": "bearer"}
+
+
+@router.patch("/changePassword")
+async def change_password(user_data: ChangeUserPassword,
+                          session: session_dependency,
+                          user: Annotated[dict, Depends(get_current_user)]):
+    """Endpoint for changing user password."""
+    response = await user_service.change_user_password(user_data, user, session)
+    return response
