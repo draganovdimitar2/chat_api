@@ -4,7 +4,7 @@ from .dependency import get_current_user
 from sqlmodel.ext.asyncio.session import AsyncSession
 from fastapi.params import Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from .schemas import UserRegistrationModel, ChangeUserPassword
+from .schemas import UserRegistrationModel, ChangeUserPassword, UserDetailsResponse
 from .service import UserService
 from app.db.main import get_session
 from app.auth.utils import create_access_token
@@ -55,5 +55,19 @@ async def change_password(user_data: ChangeUserPassword,
                           session: session_dependency,
                           user: Annotated[dict, Depends(get_current_user)]):
     """Endpoint for changing user password."""
-    response = await user_service.change_user_password(user_data, user, session)
-    return response
+    try:
+        response = await user_service.change_user_password(user_data, user, session)
+        return response
+    except HTTPException as ex:
+        raise ex
+
+
+@router.get("/userDetails")
+async def get_user_details(session: session_dependency,
+                          user: Annotated[dict, Depends(get_current_user)]) -> UserDetailsResponse:
+    """Endpoint for getting user details."""
+    try:
+        response = await user_service.get_user_details(user, session)
+        return response
+    except HTTPException as ex:
+        raise ex

@@ -10,3 +10,7 @@ class UserRegistrationModel(BaseModel):
 class ChangeUserPassword(BaseModel):
     old_password: str
     new_password: str
+
+class UserDetailsResponse(BaseModel):
+    username: str
+    email: str
