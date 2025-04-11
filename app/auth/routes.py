@@ -64,10 +64,21 @@ async def change_password(user_data: ChangeUserPassword,
 
 @router.get("/userDetails")
 async def get_user_details(session: session_dependency,
-                          user: Annotated[dict, Depends(get_current_user)]) -> UserDetailsResponse:
+                           user: Annotated[dict, Depends(get_current_user)]) -> UserDetailsResponse:
     """Endpoint for getting user details."""
     try:
         response = await user_service.get_user_details(user, session)
+        return response
+    except HTTPException as ex:
+        raise ex
+
+
+@router.delete("/deleteUser")
+async def delete_user(session: session_dependency,
+                      user: Annotated[dict, Depends(get_current_user)]) -> dict:
+    """Endpoint for user deletion."""
+    try:
+        response = await user_service.delete_user(user, session)
         return response
     except HTTPException as ex:
         raise ex

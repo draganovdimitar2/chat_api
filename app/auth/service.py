@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from sqlmodel.ext.asyncio.session import AsyncSession
-from sqlmodel import select
+from sqlmodel import select, delete
 from app.auth.utils import get_password_hash, verify_password
 from app.auth.schemas import UserRegistrationModel, ChangeUserPassword, UserDetailsResponse
 from app.db.models import User
@@ -17,9 +17,6 @@ class UserService:
         result = await session.exec(statement)
 
         user = result.first()
-
-        if not user:
-            raise HTTPException(status_code=404, detail='User not found!')
         return user
 
     async def user_registration(self, user_data: UserRegistrationModel, session: AsyncSession) -> User:
@@ -58,6 +55,8 @@ class UserService:
         Changes the password for the authenticated user.
         """
         current_user = await self.get_user_by_credential(credential.get('username'), session)
+        if not current_user:
+            raise HTTPException(status_code=404, detail='User not found!')
         if not verify_password(new_password.old_password, current_user.password_hash):
             raise HTTPException(status_code=403, detail="Old password doesn't match!")
 
@@ -70,4 +69,17 @@ class UserService:
         Retrieves the user details for a given username.
         """
         user = await self.get_user_by_credential(credentials.get('username'), session)
+        if not user:
+            raise HTTPException(status_code=404, detail='User not found!')
         return UserDetailsResponse(**user.__dict__)  # convert ORM model instance to dict and then unpack it
+
+    async def delete_user(self, credentials: dict, session: AsyncSession) -> dict:
+        """
+        Deletes user from db.
+        """
+        user = await self.get_user_by_credential(credentials.get('username'), session)
+        if not user:
+            raise HTTPException(status_code=404, detail='User not found!')
+        await session.delete(user)
+        await session.commit()
+        return {"message": "User deleted successfully!"}
