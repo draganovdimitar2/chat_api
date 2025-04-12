@@ -1,15 +1,18 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from pathlib import Path
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+ENV_PATH = BASE_DIR / ".env"
 
-class Settings(BaseSettings):  # this class reads the .env variables
+class Settings(BaseSettings):
     DATABASE_URL: str
     JWT_SECRET_KEY: str
     ALGORITHM: str
     ACCESS_TOKEN_EXPIRY: int
+
     model_config = SettingsConfigDict(
-        env_file=".env",  # this tells the BaseSettings to read from .env file
-        extra="ignore"  # ignoring extra attributes
+        env_file=ENV_PATH,
+        extra="ignore"
     )
 
-
-Config = Settings()  # import this for accessing .env variable
+Config = Settings()
