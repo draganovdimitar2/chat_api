@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     JWT_SECRET_KEY: str
     ALGORITHM: str
     ACCESS_TOKEN_EXPIRY: int
+    TEST_DATABASE_URL: str
 
     model_config = SettingsConfigDict(
         env_file=ENV_PATH,
